@@ -108,7 +108,7 @@ public class IPAddress
     }
     
     /*******************************makeIP()*************************/
-    private String makeIP(int numQuadrants)
+    private static String makeIP(int numQuadrants)
     {
         String address = "";
         
@@ -117,7 +117,7 @@ public class IPAddress
             address += rand(IP_LOWER_BOUND, IP_UPPER_BOUND) + ".";
         }
         
-        // Return without trailing period.
+        // Return without trailing period
         return address.substring(0, address.length() - 1);
     }
     
