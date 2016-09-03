@@ -36,7 +36,7 @@ public class IPAddress
     }
     
     /*******************************uGen()***************************/
-    String[] uGen(int n)
+    public String[] uGen(int n)
     {
         String[] output = new String[n];
         
@@ -59,7 +59,7 @@ public class IPAddress
     }
     
     /*******************************head()***************************/
-    void head(String[] s, int n)
+    public void head(String[] s, int n)
     {
         for (int i = 0; i < n && i < s.length; i++)
         {
@@ -68,7 +68,7 @@ public class IPAddress
     }
     
     /*******************************tail()***************************/
-    void tail(String[] s, int n)
+    public void tail(String[] s, int n)
     {
         for (int i = s.length - 1; i >= s.length - n && i >= 0; i--)
         {
@@ -77,7 +77,7 @@ public class IPAddress
     }
     
     /*******************************sort()***************************/
-    String[] sort(String[] s)
+    public String[] sort(String[] s)
     {
         Arrays.sort(s, new java.util.Comparator<String>() 
         {
