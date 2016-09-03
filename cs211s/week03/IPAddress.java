@@ -137,21 +137,4 @@ public class IPAddress
            
         return arr;
     }
-    
-    /*******************************leftZeroUnPad()******************/
-    /*private static String leftZeroUnPad(String s, String delimiter)
-    {
-        String[] arr = s.split("\\" + delimiter);
-
-        for (int i = 0; i < arr.length; i++)
-        {
-            while (arr[i].charAt(0) == '0')
-            {
-                // remove first character of arr[i]
-                arr[i] = arr[i].substring(1);  
-            }
-        }
-           
-        return String.join(delimiter, arr);
-    }*/
 }
