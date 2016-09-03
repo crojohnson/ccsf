@@ -70,7 +70,7 @@ public class IPAddress
     /*******************************tail()***************************/
     public void tail(String[] s, int n)
     {
-        for (int i = s.length - 1; i >= s.length - n && i >= 0; i--)
+        for (int i = s.length - n; i < s.length; i++)
         {
             println(s[i]);
         }
@@ -137,4 +137,21 @@ public class IPAddress
            
         return arr;
     }
+    
+    /*******************************leftZeroUnPad()******************/
+    /*private static String leftZeroUnPad(String s, String delimiter)
+    {
+        String[] arr = s.split("\\" + delimiter);
+
+        for (int i = 0; i < arr.length; i++)
+        {
+            while (arr[i].charAt(0) == '0')
+            {
+                // remove first character of arr[i]
+                arr[i] = arr[i].substring(1);  
+            }
+        }
+           
+        return String.join(delimiter, arr);
+    }*/
 }
