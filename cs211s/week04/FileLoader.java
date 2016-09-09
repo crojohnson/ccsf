@@ -176,7 +176,7 @@ public class FileLoader
     }
     
     /*******************************digit()*************************/
-    public static boolean digit(String s)  
+    private static boolean digit(String s)  
     {
         try  
         {
