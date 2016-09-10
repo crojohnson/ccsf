@@ -5,9 +5,13 @@ Requires Pyperclip
 """
 
 import argparse
-from sys import argv
 from pyperclip import copy
 
+parser = argparse.ArgumentParser(description="\nThis program formats code " +
+        "for CCSF Insight's \"moodle autoformat option\" and copies it to " +
+        "clipboard.\nRequires pyperclip.  To install it, run: pip " +
+        "install Pyperclip\n")
+        
 parser.add_argument("-i", help = "Input file", required = True)
 parser.add_argument("-o", help = "Output file", required = False)
 
