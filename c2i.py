@@ -17,7 +17,6 @@ with open(args.get("i")) as file:
     result = "<font style=\"font-family:'Courier New';font-size:10pt;\">"
 
     for line in file:
-
         result +=  line.replace("<", "&lt;").replace(">", "&gt;")\
                    .replace("\t", "    ").replace(" ", "&nbsp;")
                   
