@@ -31,7 +31,6 @@ public class IPAddress
             output[i] = makeIP(IPV4_QUADRANTS);
         }
         
-        assert output.length == n;
         return output;
     }
     
@@ -54,7 +53,6 @@ public class IPAddress
             }
         }
         
-        assert output.length == n;
         return output;
     }
     
