@@ -1,5 +1,6 @@
 /* Algorithm to find the minimum element in an array recursively with a 
- * single parameter.  Would be faster with an additional parameter for index.
+ * single parameter per assignment restriction.
+ * Better with an additional parameter for index.
  */
 
 import java.util.Arrays;
@@ -21,6 +22,19 @@ public class FindMin {
         // Then return the smaller value of either the last element in 
         // the array or the smallest element from the rest of the array.
         if (test > nums[nums.length - 1]) return nums[nums.length - 1];
+        else return test;
+    }
+    
+    public static int findMin(int[] nums, int idx) {
+        // Base case: idx reached the end of the array,
+        // return the last element.
+        if (idx == nums.length) return nums[nums.length - 1];
+    
+        // Test current element against the next index.
+        int test = findMin(nums, idx + 1);
+    
+        // Return the smaller element from the above test.
+        if (test > nums[idx]) return nums[idx];
         else return test;
     }
 }
