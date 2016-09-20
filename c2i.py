@@ -22,7 +22,6 @@ with open(args.get("i")) as file:
 
     for line in file:
         result +=  line.replace("<", "&lt;").replace(">", "&gt;")\
-                   .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;")\
                    .replace(" ", "&nbsp;").replace("(n)", "&#40;n&#41;")
                   
     result += "</font>" 
