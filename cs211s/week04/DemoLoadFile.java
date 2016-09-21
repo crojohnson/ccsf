@@ -6,13 +6,13 @@ public class DemoLoadFile
         // line number on corresponding line,
         // starting from 1.
         
-        // Print lines 3-5, 1, 5, 5, 5, 1-5, 1-5, 1-5, 5
+        // Print lines 3-5, 1, 5, 5, 5, 1-5, 5, 1-5, 4-5, 1-5
         String[] s = FileLoader.loadFile("numbers.txt", 
                            "3  -$, 1   -1,   5 -$ , $", 
-                           "$ - ,  -  $,   , - , 5-99");
+                           "$ - , -5, 5- , - , 4-99, -$");
         for (String str : s) System.out.print(str + " ");
         
         // output:
-        // 3 4 5 1 5 5 5 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 5
+        // 3 4 5 1 5 5 5 1 2 3 4 5 5 1 2 3 4 5 4 5 1 2 3 4 5
     }
 }
