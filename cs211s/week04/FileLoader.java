@@ -71,6 +71,11 @@ public class FileLoader
             if (s.indexOf("-") == 0)  // Dash at beginning
             {
                 from = 1;
+                String candidate = s.replaceAll("-", "");
+                if (digit(candidate))
+                {
+                    to = Integer.parseInt(candidate);
+                }
             }
             else if (s.indexOf("-") == s.length() - 1) // Dash at end
             {
