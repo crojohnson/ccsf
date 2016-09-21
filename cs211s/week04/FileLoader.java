@@ -34,12 +34,10 @@ public class FileLoader
                 // Commas delimit each range specification
                 String[] currentRangeSet = range[i].split(",");
 
-                /* Attempt parsing each range; an invalid  
-                 * range will log an error and exit.
-                 */
+                // Attempt parsing each range
                 for (int j = 0; j < currentRangeSet.length; j++)
                 {
-                    parseRange(strip(currentRangeSet[j]));
+                    parseRange(currentRangeSet[j].replaceAll("\\s",""));
                 }
             }
             
@@ -51,7 +49,7 @@ public class FileLoader
     /*******************************parseRange()********************/
     private static void parseRange(String s)
     {
-        verify(s);
+        verify(s);  // Terminates program if input String is invalid
         
         int from = 0;
         int to = 0;
@@ -62,36 +60,41 @@ public class FileLoader
             int location = Integer.parseInt(s);
             from = location;
             to = location;
-        }        
-        else   // Parse dash range
+        }
+        // Handle full range
+        else if (s.equals("-") || s.equals("")) {
+            from = 1;
+            to = input.size();
+        }
+        else   // Handle various dash ranges
         {
-            if (s.indexOf("-") == 0)
+            if (s.indexOf("-") == 0)  // Dash at beginning
             {
                 from = 1;
             }
-            if (s.indexOf("-") == s.length() - 1)
+            else if (s.indexOf("-") == s.length() - 1) // Dash at end
             {
+                String candidate = s.replaceAll("-", "");
+                if (digit(candidate))
+                {
+                    from = Integer.parseInt(candidate);
+                }
                 to = input.size();
-                from = Integer.parseInt(s.replaceAll("-", ""));
             }
-            else
+            else   // Dash in middle
             {
                 String[] range = s.split("-");
-
-                // Always true if verification passed.
-                assert range.length == 2; 
-
-                if (digit(range[0]))
+                if (digit(range[0])) 
                 {
                     from = Integer.parseInt(range[0]);
                 }
-                if (digit(range[1]))
+                if (range.length == 2 && digit(range[1]))
                 {
                     to = Integer.parseInt(range[1]);
                 }
             }
-        }
-
+        }        
+            
         // Handle dollar signs
         if (s.indexOf("$") == 0)
         {
@@ -101,7 +104,6 @@ public class FileLoader
         {
             to = input.size();
         }
-        
         addOutput(from, to, s);
     }
     
@@ -135,7 +137,7 @@ public class FileLoader
     {
         int dollarCount = 0;
         int dashCount = 0;
-        
+           
         for (int i = 0; i < s.length(); i++) 
         {
             char c = s.charAt(i);
@@ -167,12 +169,6 @@ public class FileLoader
                 }
             }
         }
-    }
-
-    /*******************************strip()*************************/
-    private static String strip(String s)
-    {
-        return s.trim();
     }
     
     /*******************************digit()*************************/
@@ -211,7 +207,6 @@ public class FileLoader
         try 
         {
             Scanner sc = new Scanner(f);
-
             while (sc.hasNextLine()) {
                 input.add(sc.nextLine());
             }
