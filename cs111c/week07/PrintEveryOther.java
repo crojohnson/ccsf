@@ -13,8 +13,7 @@ public class PrintEveryOther {
     }
 
     public static void printEveryOther(int[] nums, int idx) {
-        if (idx >= nums.length) return;
-        else {
+        if (idx < nums.length) {
             System.out.println(nums[idx]);
             printEveryOther(nums, idx + 2);
         }
