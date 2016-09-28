@@ -15,9 +15,13 @@ public class PrintEveryOther {
         // Base case, end of array.
         if (idx == nums.length) return;
         
+    public static void printEveryOther(int[] nums, int idx) {
+        // Base case, end of array.
+        if (idx >= nums.length) return;
+        
         else {
-            if (idx % 2 == 0) System.out.println(nums[idx]);
-            printEveryOther(nums, idx + 1);
+            System.out.println(nums[idx]);
+            printEveryOther(nums, idx + 2);
         }
     }
 }
