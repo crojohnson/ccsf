@@ -4,7 +4,7 @@
 
 public class PrintEveryOther {
     public static void main(String[] args) {
-        int[] arr = {844,43423,19,190,318,12,78,99};
+        int[] arr = { 844, 43423, 19, 190, 318, 12, 78, 99 };
         printEveryOther(arr);
     }
     
