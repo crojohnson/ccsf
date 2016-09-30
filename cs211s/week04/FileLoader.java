@@ -212,7 +212,8 @@ public class FileLoader
         try 
         {
             Scanner sc = new Scanner(f);
-            while (sc.hasNextLine()) {
+            while (sc.hasNextLine()) 
+            {
                 input.add(sc.nextLine());
             }
             sc.close();
