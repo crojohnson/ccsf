@@ -2,7 +2,7 @@
  * Author : Greg Gorlen
  * Date :   10/2/16
  * Homework assignment : 3
- * Objective : This progrm displays information about a Java class
+ * Objective : This program displays information about a Java class
  *
  * Valid arg options:
  * -a : display all
