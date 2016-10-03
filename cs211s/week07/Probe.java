@@ -55,7 +55,7 @@ public class Probe
         {
             try
             {
-                name = name.replaceAll(".class", "");
+                name = name.replace(".class", "");
                 Class cls = Class.forName(name);
                 println("Compiled from \"" + name + ".java\"");
                 String mods = Modifier.toString(cls.getModifiers());
@@ -93,7 +93,7 @@ public class Probe
                 {
                     f.setAccessible(true);
                     println(("  " + f + " = " + f.get(null))
-                        .replaceAll(c.getName() + ".", "") + ";");
+                        .replace(c.getName() + ".", "") + ";");
                 }
             } catch (Exception e) { }
         }
@@ -126,7 +126,7 @@ public class Probe
         for (Method m : methods)
         {
             println(("  " + m)
-                .replaceAll(c.getName() + ".", "") + ";");
+                .replace(c.getName() + ".", "") + ";");
         }
     }
     
@@ -138,7 +138,7 @@ public class Probe
         {
             if (!Modifier.isFinal(f.getModifiers()))
                 println(("  " + f)
-                    .replaceAll(c.getName() + ".", "") + ";");
+                    .replace(c.getName() + ".", "") + ";");
         }
     }
 }
