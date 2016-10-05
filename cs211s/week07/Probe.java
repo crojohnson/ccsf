@@ -44,13 +44,10 @@ public class Probe
         
         // Collect class name arguments
         String[] classes = g.getarg();    // get filename(s)
-
-        // Verify args were provided
         if (classes[0] == "") die("No class file provided");
-        if (choices.size() == 0) die("No options provided");
 
         // Print specified class contents
-        boolean all = choices.contains('a');
+        boolean all = choices.contains('a') || choices.size() == 0;
         for (String name : classes)
         {
             try
@@ -63,7 +60,8 @@ public class Probe
                 {
                     println(mods + " class " + name + " {");
                 }
-                else {   // this class is an interface
+                else   // this class is an interface
+                {
                     println(mods + " " + name + " {");
                 }
 
