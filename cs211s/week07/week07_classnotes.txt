@@ -1,0 +1,137 @@
+CS211s -- 9/27/16 
+
+This week's topic: Reflection
+
+A controversial program that decompiled class files emerged in the 90s called
+Mocha decompiler: https://en.wikipedia.org/wiki/Mocha_(decompiler)
+
+There is a decompiler included in Java called javap
+javap java.util.Date   // show the program
+javap -c GetOpt.class  // decompile a class
+
+Some ways of obtaining a Class object:
+Class c1 = Class.forName("java.lang.String"); // type descriptor for String
+Class c2 = Class.forName("[I");
+Class c3 = Class.forName("[[Ljava.awt.Button");
+
+If we wish to obtain the Class' superclass, try:
+Class c2 = c.getSuperClass();
+c2.getName(); // getName() function returns the name of the class
+
+Another approach to getting a Class object: append ".class"
+Class c = Date.class;
+Class c1 = c.getSuperclass(); // one can continue calling this until Object class is reached
+c1.getName();
+
+Use the getConstructors() method to get the constructors in a class:
+Constructor[] con = c.getConstructors();
+for (Constructor c : con)
+{
+    String name = c.getName();
+    println(name);
+}
+
+If the "con" array returned by getConstructors() is empty, this class has no constructors.
+**** This may be on final exam! ****
+
+Determine if a class has a factory method with
+boolean hasFactoryMethod(Class c);
+
+getFields() returns the name of each field, type of field and its attributes.*/
+Fields[] f = c.getDeclaredFields();
+f = c.getFields();   // returns all public variables... not private variables!
+for (Field field : f)
+{
+    println(field);  // or use getName() or other methods
+}
+
+Method class can provide information for the methods in an object:
+Method getDeclaredMethods();
+
+Interfaces are also Classes but have their own method to retrieve them from a class:
+Class[] c = getInterfaces();
+Class[] c = Date.class.getInterfaces();
+boolean isInterface();
+
+Get modifiers such as static, volatile, etc with:
+int c.getModifiers();
+
+Is the class an array?
+boolean Class.isArray();
+
+Is the class an interface?
+println(java.lang.Cloneable.class.isInterface());
+
+Date d = new Date();
+String s = new String();
+
+if (d instanceof s) { }; // false
+
+Test for primitive-ness with:
+boolean isPrimitive();
+
+Class c = Byte.TYPE;
+if (c.isPrimitive()) { }; // true
+
+**** Question on final exam: ****
+What is the output of these 4 lines?
+println(String.class.isPrimitive());  // false
+println(int.class.isPrimitive());     // true
+println(int[].class.isPrimitive());   // false, arrays are not primitive
+println(Integer.TYPE.isPrimitive());  // true, because TYPE represents the wrapper for int
+
+More reflection methods galore:
+int Class.getModifiers();
+int Constructor.getModifiers();
+int Field.getModifiers();
+int Methods.getModifiers();
+
+boolean isAbstract(int mod); 
+boolean isFinal(int mod);  // handles constants or -C
+boolean isInterface(int mod);
+boolean isNative(int mod); // when a variable is native, it can be used in C or another language
+boolean isPrimitive(int mod); // deprecated, don't use!
+boolean isPrivate(int mod); 
+boolean isProtected(int mod);
+boolean isPublic(int mod);
+boolean isStatic(int mod);
+boolean isSynchronized(int mod);
+boolean isTransient(int mod);
+boolean isVolatile(int mod);
+
+if (mod & Modifier.PUBLIC == mod) // a single "&" is a bit operator
+{
+   // if we're in this block, mod is PUBLIC
+}
+
+A breakdown of modifiers--which apply?
+public, abstract, final : class
+public, protected, private : method
+public, protected, private, static, final, volatile, transient : variables / fields
+
+
+**** Question on final exam: ****
+Write a program to count the number of constructors in an object and display their headers.
+
+
+Next week or later on in the class, we'll cover modifiers and the rest of reflection, 
+as well as generics, collections, and graphics in Java.
+
+In the meantime, play with DemoGetOpts to prepare for next week's homework on reflection.
+
+Preliminary homework details (assignment 3: Probe.java):
+
+Use: GetOpt.class and DemoGetOpt.java to process command line arguments.
+
+Run with: java Probe -c Date.class  // returns constructors
+Return each method in the class in this format: public static int methodName(double d, String str);
+Format for variables is: public/private static volatile (etc) int age = 38; 
+Make sure any combination of command line args are permitted.
+Compare output with javap: javap -c java.util.Date.class
+ * Valid arg options:
+ * -a : display all
+ * -c : display constructors
+ * -C : display constants
+ * -i : display interfaces
+ * -m : display methods
+ * -v : display variables
