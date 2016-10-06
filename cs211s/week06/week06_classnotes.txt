@@ -1,4 +1,4 @@
-CS211s -- 9/20/16 
+CS211s -- 9/22/16 
 
 This week's topics: Multithreading, JARs and Reflection
 
