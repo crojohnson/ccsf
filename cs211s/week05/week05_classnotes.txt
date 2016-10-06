@@ -1,0 +1,127 @@
+CS211s -- 9/20/16 
+
+This week's topic: Multithreading
+
+
+Importing wrappers:
+In Java 8: there is a "default interface", or an
+interface with the following modifier:
+public default die() {}
+
+
+Topic: Hanging out with java interactive:
+
+Installing "ij" --Libij.class
+In instructor's dir.
+ij -h   // -h for help
+
+Ways to get Java versions in ij:
+
+p(System.getProperty("java.version"));
+p(Runtime.class.getPackage().getImplementationVersion());
+String str[] = ("" + System.getProperties()).split(",");
+for (String s : str) p(s);
+
+
+Date d = new Date();
+p(d);
+
+
+String t = "3456-";
+int pos = t.indexOf("-");
+p(t);
+p(t.subString(0, t.length() - 1));
+
+
+public static int add(int a, int b)
+{
+    return a + b;
+}
+p("sum = " + add(5, 9));
+
+ij -C String | wc -l
+
+
+Topic: Multithreading
+
+There can be many threads in a single process.
+Use the Thread class in Java to handle multithreaded 
+programs.
+
+
+class NewThread extends Thread
+{
+    public NewThread(String tname)
+    {
+        super(tname);
+        println("child thread: " + this);
+        start();
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Do stuff here...");        
+
+        switch (getName()) 
+        {
+            case "silver":
+                //doSorting();
+                break;
+            case "gold":
+                //doSearching();
+                break;
+        }
+    }
+}
+
+class Demo
+{
+    public static void main(String[] args( {
+        Thread t1 = new newThread("gold");
+        Thread t2 = new newThread("silver");
+        t1.isAlive();
+
+        // here's how to control threads:
+        t1.join();   // wait until thread finishes
+        t2.join();  // this won't be executed as long as t1 is alive
+
+        while (t1.isAlive()) { }  // while (thread.isAlive())
+                                  // is identical to .join()
+
+        // etc
+    }
+}
+
+A couple of Thread methods:
+getId() gets ID of a thread.
+getName() gets name of a thread.
+
+
+Topic: A helper method for FileLoader.java homework
+
+Space efficiency vs speed efficiency in programming: 
+Today, 50 gigs == $1.00.  Example: ~$100 for a TB
+...As a result, we usually learn towards speed 
+efficiency over space efficiency!
+
+public static long lineCounter(String filename)
+{
+    long lineNum = -1;
+    try (LineNumberReader lnr = new LineNumberReader
+                         (new FileReader(filename)))
+    {
+        lnr.skip(Long.MAX_VALUE); // point to the end of file 
+        lineNum = lnr.getLineNumber();
+    } catch (IOException e) {
+        System.err.println(e);
+    } 
+    return lineNum;
+}
+
+
+Topics to be discussed next week: JAR files and
+anonymous innner classes
+...then: reflection!
+
+WARNING: Most questions on the midterm and final will be related to
+metaprogramming and reflection.
