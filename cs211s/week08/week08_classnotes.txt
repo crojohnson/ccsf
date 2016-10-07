@@ -1,0 +1,264 @@
+CS211s -- 10/6/16 
+
+This week's topics: Reflection and modifiers, Generics
+
+
+How can we execute an object's methods without knowing what those methods are?
+
+Use the Method class!
+
+In the following example, we're given an Object, obj, and its method doit
+which we want to invoke:
+
+try 
+{
+    Method m = obj.getClass().getMethod("doit", int.class);
+    // or, we can call getMethod with null.
+
+    m.invoke(obj, 5);
+} catch (Exception e) { }
+
+If doit is overloaded, we're using the arguments and type (int.class) to
+pick a specific method.  We can skip int.class arguments if doit isn't overloaded.
+
+getMethod() also allows us to invoke superclass methods.  getDeclaredMethod() is used 
+when we want to only deal with methods declared in the specified class.
+
+class Demo 
+{
+    public static void main(String ... args)
+    {
+        Field[] f = java.lang.Integer.class.getDeclaredFields();
+        
+        for (Field x : f) 
+        {
+            Class type = x.getType();
+            String name = x.getName();
+            print(Modifier.toString(x.getModifiers())); // Uses Modifier class
+            println("" + type.getCanonicalName() + " " + name + ";");
+        }
+    }
+}
+
+// output:
+|----modifiers---||getType||--getCanonicalName--|
+public static final int MIN.VALUE;
+public static final int MAX.VALUE;
+public static final java.lang.Class.TYPE;
+static final char[] digits;
+
+We could modify the above program to get the value of each field.
+
+Class[] cls = c.getDeclaredClasses(); // returns inner classes
+Class[] cls = c.getDeclaredClass(); // returns inner class
+for (Class clazz : cls) println(clazz.getName());
+// or use getCanonicalName() which gives pretty much the same thing most of the time.
+
+int m = Field.getModifiers();
+
+Class (upper-C) has a bunch of static methods 
+which take getModifiers() as arg
+
+if (Class.isStatic(m))
+if (Class.isFinal(m))
+if (Class.isPublic(m))
+...etc...
+
+**** Question for the final exam: ****
+Write a method to display all the static methods of any object.
+
+public void showStaticMethods(Object obj)
+{
+    Class cls = obj.getClass();  // for anything in reflection, 
+                                 // first step is always creating an object
+                                 // of the upper-C class
+                                 
+    // if the above causes error, write this:
+    // Class<?> c = obj.getClass(); // Java 7, Class is generic
+    
+    Method[] methods = c.getDeclaredMethods();
+    for (Method m : methods) 
+    {
+        // getModifiers() returns int, isStatic() takes int
+        if (Modifier.isStatic(m.getModifiers()))  
+        {
+            println(m);
+        }
+    }
+}
+
+Another way to do it:
+Class cls = obj.getClass().getType();
+
+// some iteration here
+String str = type.getCanonicalName();
+if (str.contains("static")) println(str);
+
+
+Method m = c.getMethod("sortIt");
+
+Some more upper-C Class methods:
+Class getDeclaringClass();
+Class[] getDeclaringClass(); // if multiple declaring classes
+Class[] getExceptionTypes();
+int getModifiers();
+String getName();
+Class[] cls = getParameterTypes();
+Class getReturnType();
+
+Method[] m = obj.getClass().getDeclaredMethods();
+for (Method d : m) println(d.getName() + ": " + d.getReturnType().getName());
+
+Field[] f = obj.getClass().getFields();
+try
+{
+    for (Field field : f)
+    {
+        println(field.getName() + " = " + d.get(obj));
+        // .get() method can take a superclass object to specify which variable
+        // to return
+    }
+}
+
+Class d = Integer.getClass();
+if (d.getType() == byte.class)
+if (d.getType() == int.class)
+if (d.getType() == double.class)
+                   (etc)
+
+                   
+Topic: Generics
+
+Used when we want to make a general method or class that can accept any type.
+
+In the old days:
+public void doit(Object o) { }
+This required a lot of casting and testing.  Not elegant.  We don't know from the
+header whether String or int is permitted.
+
+Generic definition: parameterized type.
+doit(T o)  // Use upper letter, it's the normal fashion but not 100% required
+
+// A first generics class:
+class Gen<T>
+{
+    T ob;
+    
+    Gen(T o)
+    {
+        ob = o;
+    }
+    
+    T getob() { return ob; }
+    
+    void showType()
+    {
+        println("Type of T is " + ob.getClass().getName());
+    }
+}
+
+public class DemoGen
+{
+    public static void main(String[] args)
+    {
+        Gen<Integer> g = new Gen<>(88);
+        g.showType();
+        int v = g.getOb();
+        println("value = " + v);
+        
+        Gen<String> sg = new Gen<>("hello John");
+        sg.showType();
+        String str = sg.getob();
+        println("value = " + str);
+    }
+}
+
+This should look familiar: ArrayList<String> al = new ArrayList<>();
+We can't put primitives in generics.
+
+**** Question on final exam: ****
+public class TwoGen<T, V>
+{
+    T ob1;
+    V ob2;
+    
+    public TwoGen(T o1, V o2)
+    {
+        ob1 = o1;
+        ob2 = o2;
+    }
+    
+    public void showTypes()
+    {
+        println("Type of T = " + ob1.getClass().getName());
+        println("Type of V = " + ob2.getClass().getName());
+    }
+    
+    public T getob1() { return ob1; }
+    public T getob2() { return ob2; }
+}
+
+public class DemoTwoGen
+{
+    public static void main(String[] args)
+    {
+        TwoGen<Integer, String> tg = new TwoGen<>(85, "Abbas");
+    }
+}
+
+We'll see an example of this with Map<String, Integer> mp = new Map<>();
+The key in a map is always a String.
+
+public class Stats
+{
+    
+}
+
+Aside: Abbas loves ballroom dancing.  Only dancing with rules.
+
+
+// Restrict T to accept classes implementing Number
+// This header says: "T is bounded by number"
+class Stats<T extends Number>  
+{
+    T[] nums;     // generic array
+    
+    public Stats(T[] o) { nums = o; }
+
+    double average()
+    {
+        double sum = 0.0;
+        
+        for (int i = 0; i < nums.length; i++)
+        {
+            sum += nums[i].doubleValue(); // convert obj to double
+                                          // and a compiler error
+                                          // without restrictive header
+        }
+        
+        return sum / nums.length;
+    }    
+}
+
+
+public class DemoStats
+{
+    public static void main(String[] args)
+    {
+        // Example: Stats<String> st = new Stats<>(); will fail!
+        Stats<Integer> st = new Stats<>(int[]{ 5, 9, 6, 12 });
+        
+        double v = st.average();
+        println("Average = " + v);
+    }
+}
+
+Debugging programs which use generics--use restrictions on types as above.
+"extends" in the above class does not mean subclass, but "upper bound."
+
+Here's another possible header for upper bounds:
+class Stats<T extends Number & MyInterface>
+The Classes need to be listed before the Interfaces in the above and below examples.
+class gen<T extends MyClass & myInt1 & myInt2>
+
+Next week: 30 minute open note/book midterm, then more generics.
