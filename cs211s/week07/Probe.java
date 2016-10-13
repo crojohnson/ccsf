@@ -131,7 +131,7 @@ public class Probe
     /*******************************showVariables()*****************/
     public static void showVariables(Class c)
     {
-        Field[] fields = c.getFields();
+        Field[] fields = c.getDeclaredFields();
         for (Field f : fields)
         {
             if (!Modifier.isFinal(f.getModifiers()))
