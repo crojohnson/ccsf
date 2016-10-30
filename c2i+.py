@@ -6,7 +6,8 @@ Requires Pyperclip
 This is the "fancy" version with minor syntax highlighting.  
 
 todos:
--improve/fix replacement characters used to designate HTML tags
+-improve/fix replacement characters used to designate HTML tags, 
+ i.e. ~ is already in use for bit operations, etc.
 -add String highlighting, consider handling lists: "one", "two", "three"
 -add method highlighting
 -fix issues with keywords next to parenthesis, e.g. "for(int i ...)"
@@ -124,7 +125,7 @@ with open(args.get("i")) as file:
                         temp_line[i].count("\"") % 2 == 0:
                         opened_quote = False
 
-            
+            # only process if line processing wasn't already performed during the above loop
             if process_line:
                 line = " ".join(temp_line)
             else: process_line = True
