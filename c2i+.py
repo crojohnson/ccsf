@@ -7,7 +7,7 @@ This is the "fancy" version with minor syntax highlighting.
 
 todos:
 -improve/fix replacement characters used to designate HTML tags
--add String highlighting
+-add String highlighting, consider handling lists: "one", "two", "three"
 -add method highlighting
 -fix issues with keywords next to parenthesis, e.g. "for(int i ...)"
 """
@@ -99,7 +99,7 @@ with open(args.get("i")) as file:
                     process_line = False
                     break
             
-                # check for string open/close
+                # check for string open
                 if not opened_comment:
                     if not opened_apostrophe and "'" in temp_line[i] and \
                         temp_line[i].count("'") % 2 == 0:
@@ -114,7 +114,8 @@ with open(args.get("i")) as file:
                             if temp_line[i] == keyword:
                                 temp_line[i] = "~font`style=\"color:#44f;\"%" \
                                   + temp_line[i] + "~/font%"
-                                  
+                
+                # check for string close
                 if not opened_comment:
                     if opened_apostrophe and "'" in temp_line[i] and \
                         temp_line[i].count("'") % 2 == 0:
