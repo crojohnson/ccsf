@@ -80,7 +80,7 @@ public class ABGuesser {
                 guesser.addSequence(guesses, guess);
                 
                 // add current guess or actual response to guesses
-                guesses = guesses.substring(guesses.length() - 3) 
+                guesses = guesses.substring(1, guesses.length()) 
                                       + Character.toString(guess);
             }
             else { // sequence hasn't reached length 4 yet
@@ -127,11 +127,11 @@ public class ABGuesser {
        has been seen, or a blank char if unseen */
     private char getBest(String sequence) {
         
-        /*// print memory debug
+        // print memory debug
         out.println("The seq: " + sequence);
         for (String k : sequences.keySet()) {
             out.println(k + " " + sequences.get(k).a + " " + sequences.get(k).b );
-        }*/
+        }
         
         if (sequences.containsKey(sequence)) {
             return sequences.get(sequence).a > 
