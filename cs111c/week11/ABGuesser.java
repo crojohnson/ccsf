@@ -33,10 +33,10 @@ import java.util.HashMap;
 public class ABGuesser {
     private HashMap<String, AB> sequences;
     
-    /* play a game */
+    /* play a full game */
     public static void play() {
-        ABGuesser guesser = new ABGuesser();
         Scanner kbd = new Scanner(System.in);
+        ABGuesser guesser = new ABGuesser();
         
         // init game variables
         String guesses = "";
@@ -44,12 +44,13 @@ public class ABGuesser {
         int correct = 0;
         int incorrect = 0;
             
-        while (true) {
+        while (true) { // main game loop
 
             out.println("Choose A or B, and I will guess your choice.");
             out.println("Press Return when you are ready.");
             kbd.nextLine();
             
+            // get the computer's guess for this turn
             guess = guesser.getGuess(guesses);
             
             if (guess != 'A' && guess != 'B') {
@@ -69,7 +70,8 @@ public class ABGuesser {
                 case 'q' : System.exit(0);
                 case 'y' : correct++;  break;
                 case 'n' : 
-                    guess = guess == 'A' ? 'B' : 'A';
+                    // computer was incorrect; adjust guess
+                    guess = guess == 'A' ? 'B' : 'A'; 
                     incorrect++;
             }
             
@@ -78,13 +80,15 @@ public class ABGuesser {
                 guesser.addSequence(guesses, guess);
                 
                 // add current guess or actual response to guesses
-                guesses = guesses.substring(guesses.length() - 3) + Character.toString(guess);
+                guesses = guesses.substring(guesses.length() - 3) 
+                                      + Character.toString(guess);
             }
             else { // sequence hasn't reached length 4 yet
                 guesses += Character.toString(guess);
             }
 
-            out.println("Score: " + correct + " correct, " + incorrect + " incorrect");
+            out.println("Score: " + correct + " correct, " 
+                                + incorrect + " incorrect");
         }
     }
     
@@ -92,22 +96,24 @@ public class ABGuesser {
         sequences = new HashMap<>();
     }
     
+    // returns most common choice if parameter in memory or a random choice
     private char getGuess(String guesses) {
         char guess = getBest(guesses);
         return guess == ' ' ? randAB() : guess;
     }
     
+    // writes a sequence/choice pair to memory
     private void addSequence(String sequence, char choice) {
         if (sequences.get(sequence) == null) {
             sequences.put(sequence, new AB());
         }
 
         AB temp = new AB();
-        if (choice == 'A') {
+        if (choice == 'A') { // increment A
             temp.a = ++sequences.get(sequence).a;
             temp.b = sequences.get(sequence).b;
         }
-        else if (choice == 'B') {
+        else if (choice == 'B') { // increment B
             temp.a = sequences.get(sequence).a;
             temp.b = ++sequences.get(sequence).b;
         }
@@ -117,6 +123,8 @@ public class ABGuesser {
         sequences.put(sequence, temp);
     }
     
+    /* returns the most common choice if sequence 
+       has been seen, or a blank char if unseen */
     private char getBest(String sequence) {
         
         /*// print memory debug
@@ -132,6 +140,7 @@ public class ABGuesser {
         return ' ';
     }
     
+    // returns a random choice
     private char randAB() {
         return Math.random() >= .5 ? 'A' : 'B';
     }
