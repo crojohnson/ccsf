@@ -57,6 +57,7 @@ public class ABGuesser {
                 throw new IllegalStateException();
             }
             
+            // get the human's yes/no response to computer's guess
             String response = " ";
             while (response.toLowerCase().charAt(0) != 'n' &&
                    response.toLowerCase().charAt(0) != 'y' &&
@@ -66,6 +67,7 @@ public class ABGuesser {
                 response = kbd.next();
             }
             
+            // handle response
             switch (response.toLowerCase().charAt(0)) {
                 case 'q' : System.exit(0);
                 case 'y' : correct++;  break;
@@ -128,10 +130,10 @@ public class ABGuesser {
     private char getBest(String sequence) {
         
         // print memory debug
-        out.println("The seq: " + sequence);
+        /*out.println("The seq: " + sequence);
         for (String k : sequences.keySet()) {
             out.println(k + " " + sequences.get(k).a + " " + sequences.get(k).b );
-        }
+        }*/
         
         if (sequences.containsKey(sequence)) {
             return sequences.get(sequence).a > 
