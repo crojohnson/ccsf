@@ -1,0 +1,184 @@
+CS211s -- 11/3/16
+
+This week's topics: Interfaces, collections
+
+
+Topic: Interfaces
+
+Some interface types:
+
+-Marker is an interface type that contains no methods, or is an empty interface.
+Examples include: Serializable, Clonable, Remote, EventListener
+
+Possible exam question: write a method to list all empty interfaces.
+Approach: get all methods from each interface, and then get methods for each one.
+
+-Functional interfaces have a signature of only one method, no more or less.
+This is very heavily used in Java 8 lambda expressions.
+https://www.oreilly.com/learning/java-8-functional-interfaces
+Examples: Comparable, Runnable, Consumer, Supplier
+
+-Interfaces with default interfaces are static and fully implemented.  For example,
+
+interface DoIt
+{
+    public void greet();
+    
+    default void hi(String name) 
+    {
+        println("Hi, " + name);
+    }
+}
+
+You can override default methods if you want.
+
+-Interfaces with static methods.  You can make a library of static methods if you want
+as an interface.  Examples of calling such static methods:
+Math.sqrt(a);
+DoIt.mySqrt(7);
+
+Prof. says Windows sucks!  Example of printing 10,000 files:
+ls "^[aeiou]...[0-9]$" | lp
+
+
+Topic: Collections
+Most of the interfaces covered last week are implemented by AbstractCollection.
+This is a base class for many other Collections classes.  Example:
+
+AbstractList extends AbstractCollection implements List
+AbstractQueue extends AbstractCollection implements Queue
+AbstractSequentialList extends AbstractList
+LinkedList extends AbstractSequentialList imeplments Deque, Queue, List
+ArrayList extends AbstractList implements List
+ArrayDeque extends AbstractCollection implements Deque
+AbstractSet extends AbstractCollection implements Set
+EnumSet extends AbstractSet
+HashSet extends AbstractSet implements Set
+LinkedHashSet extends HashSet
+PriorityQueue extends AbstractQueue implements Queue
+TreeSet extends AbstractSet implements NavigableSet
+
+class ArrayList<E>
+ArrayList()
+ArrayList(Collection<? extends E> c) // we want to transfer contents of parameter collection to calling object.
+ArrayList(int capacity)
+
+class DemoArrayList
+{
+    public static void main(String[] args) 
+    {
+        ArrayList<String> al = new ArrayList<>();
+        
+        // call al.ensureCapacity(92); here to optimize
+        // adding, say 92 elements.
+        al.add("nice");
+        al.add("tall");
+        al.add("rich");
+        al.add("handsome");
+        al.add(1, "short"); // doesn't replace "tall"
+        
+        println(al.size());
+        println(al);   // displays array via toString()
+        al.remove("tall");
+        
+        // removes index of item to remove, 
+        // even if it's an ArrayList of Integers
+        al.remove(3);   
+        
+        // to remove an Integer from an ArrayList:
+        al.remove(new Integer(3));
+        
+        // using toArray()
+        String a[] = new String[al.size()];
+        a = al.toArray(a);
+    }
+}
+
+Some useful ArrayList methods:
+void ensureCapacity(int size) // optimize adding a certain number of items
+void trimToSize() // size and capacity are the same
+Object[] toArray() // returns an array of Objects
+
+class LinkedList<E>
+LinkedList() // non-generic version
+LinkedList(Collection<? extends E> c)
+
+class DemoLinkedList
+{
+    public static void main(String[] args) 
+    {
+        LinkedList<String> ll = new LinkedList<>();
+        ll.add("good");
+        ll.add("nice");
+        ll.add("bad");
+        ll.add("ugly");
+        
+        ll.addFirst("a"); // shifts a onto ll
+        ll.addLast("z");  // pushes z onto ll
+        ll.add(1, "nasty");
+        
+        println(ll);
+        
+        ll.remove("good");
+        ll.removeFirst(); // unshift
+        ll.removeLast();  // this is a single linked list 
+                          // implementation so this call is slow
+        
+        String str = ll.get(2); // get index 2
+        ll.set(2, "I am here"); // overwrites index 2
+        
+    }
+}
+
+Both ArrayList and LinkedList implement List.
+
+HashSet class: no duplicates.  For earlier assignment, 
+add IP addresses to a set.  Hashes are very efficient in space and retrieval.
+
+HashSet()
+HashSet(Collect<? extends E> c)
+HashSet(int capacity)
+HashSet(int capacity, float fillRatio) 
+// fillRatio determines when structure size is increased
+
+class DemoHashSet 
+{
+    HashSet<String> hs = new HashSet<>();
+    hs.add("good");
+    hs.add("good");
+    hs.add("good");
+    hs.add("bad");
+    hs.add("nice");
+    
+    Iterator<String> it = hs.iterator();
+    
+    while(it.hasNext()) println(it.next());
+    
+    for(String s : hs) println(s);
+    
+}
+
+Iterator has methods that give more control than enhanced for loop.
+
+LinkedHashSet -- unique items unlike normal linked list.  Typical interview question.
+All methods in LinkedHashSet are from methods it extends or implements.
+
+TreeSet -- unique once again.  
+TreeSet()
+TreeSet(Collection<? extends E> c)
+
+Add an arraylist to a TreeSet to sort and remove duplicates:
+TreeSet<String> ts = new TreeSet<>(al);
+ArrayList<String> al = new ArrayList<>(ts);
+
+TreeSet<String> ts = new TreeSet<>();
+ts.add("c");
+ts.add("a");
+ts.add("b");
+ts.add("c");
+
+println(ts); [a, b, c]
+
+Map: key and value, keys should be unique.  Maps don't implement iterable
+and don't accept iterators.
+
