@@ -182,3 +182,11 @@ println(ts); [a, b, c]
 Map: key and value, keys should be unique.  Maps don't implement iterable
 and don't accept iterators.
 
+Useful for config files, for example:
+doit.confg
+color     : red
+max_mem   : 64k
+sound     : true
+num_users : 1
+
+Properties and dictionaries are deprecated in Java.
