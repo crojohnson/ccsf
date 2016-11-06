@@ -1,0 +1,135 @@
+CS211s -- 8/18/16 
+
+This week's topics: Introduction and basic method wrappers
+
+
+Instructor's public directory on Hills: /pub/cs/amoghtan/cs211s
+
+
+Ways that Java communicates with the user: 
+  - stdout: out   ex: System.out.println("Hello World");
+  - stdin: in     ex: System.in.read();
+  - stderr: err   ex: System.err.println("Invalid number");
+    - For errors, always use err channel to display messages.
+    
+Here's a wrapper for println:
+
+public static void println(Object ... o)   // variable number of arguments
+{
+    if (o.length == 0) {
+        System.out.println();
+    }
+    else {
+        System.out.println("" + o[0]);
+    }
+}
+
+public static void print(Object ... o)   // variable number of arguments
+{
+    if (o.length == 0) {
+        System.out.print();
+    }
+    else {
+        System.out.print("" + o[0]);
+    }
+}
+
+Here's a wrapper for System.exit() :
+
+public static void die(String ... errmsg)
+{
+    if (errmsg.length == 0) {
+        System.err.println(errmsg[0]);
+        System.exit(1);
+    }
+}
+
+// example usage:
+if (num < 0)
+{
+    die("No negative number allowed");
+}
+
+Code style requirements:
+
+Use enhanced for loop when possible
+Always put braces under the instruction, not on the same line.
+Omitting braces are OK for one-liners.
+bu.rb is a beautifier     ex: bu.rb Hw1.java
+sh.rb is a method adder   ex: sh.rb -s Hw1.java
+
+Code style for methods: 
+
+65 characters per line  ex: 
+/*******************************|********************************/
+
+
+Topic: More wrappers
+
+Property in Java: A library in key-value format (String/String) ..collectively "properties" of Java.
+Includes Java platform or OS which helps to make programs more compatible in different OS environments.
+For example: System.getProperty("os.version");
+Other keys we can send to System.getProperty() as parameters:
+  - "java.home"
+  - "java.vendor"
+  - "line.separator" (returns, for example WIN: "\r\n" or MAC: "\n")
+  - "path.separator" (returns, for example WIN: "\usr\bin;\" or UNIX: "/usr/bin:/")
+
+How do you find the name of your own program?
+
+Example: finding validation of command line arg, program called "DoIt.java":
+
+if (args.length != 2) die("Usage: java DoIt file1 file2");
+java DoIt abc.txt xyz.txt
+
+Then, your boss says "Change the name of the program from DoIt.java to Copy.java"
+
+So, we can do the following: 
+System.getProperty("sun.java.command");  // <--returns String
+Example:
+if (args.length != 2) 
+{
+    die("Usage: java " + System.getProperty("sun.java.command").split(" ")[0] + " file1 file2");
+}
+
+In non-main() classes, sun.java.command is a way to access the program name and args.
+
+Wrapper for the above:
+public static String progName()
+{
+    return System.getProperty("sun.java.command").split(" ")[0];
+}
+
+Re-written original program:
+if (args.length != 2) die("Usage: " + progName() + " file1 file2");
+
+Return statement style.  Write like this:
+public static boolean isEven(int num)
+{
+    return num % 2 == 0;
+}
+
+...not like this:
+public static boolean isEven(int num)
+{
+    if (num % 2 == 0)
+        return (true);
+    else
+        return (false);
+}
+
+
+Topic: Adding debugging
+
+java -DDEBUG DoIt
+debug("x = " + x);
+debug("now I am in the fact method");
+public static void debug(Object o, boolean ... b)  // boolean for logging
+{
+    if (System.getProperty("DEBUG") != null)
+    {
+        if ()
+    }
+}
+
+Next week: rest of the debug method, static import, threading.

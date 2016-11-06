@@ -1,0 +1,249 @@
+CS211s -- 9/8/16 
+
+This week's topic: Multithreading
+
+
+The class for multithreading is Thread
+Its sleep() method is overridden with two options: 
+millisecond and nanosecond
+
+public static void sleep(long ms) 
+{
+    try 
+    {
+        Thread.sleep(ms);
+    } catch (InterruptedException e) 
+    {
+        
+    }
+}
+
+// Example usage:
+for (int i = 0; i < 10; i++) 
+{
+    sleep(1000);
+    print(" " + i);
+}
+
+
+Ruby's gets method
+Example: A program that asks how old the user is.  
+How does this work in Java?
+
+In Ruby: gets("how old are you?")
+In Java, we have Console class, example: 
+Console con = System.console();
+
+if (con != null) {
+    // ...
+}
+
+Some methods:
+readLine();
+readLine(String prompt);
+readLine(String fmt, Object ... args);
+    "%s:","your age");
+readPassword(String fmt, Object ... args);   // doesn't echo to screen
+con.flush(); // forces data from memory
+
+Let's write a gets method for Java:
+
+public static String gets(String ... prompt) 
+{
+    String str;
+    Console con = System.console();  // notice: no new keyword, factory method?
+    
+    if (con != null)
+    {
+        if (prompt.length != 0)
+        {
+            str = con.readLine(prompt[0]);
+        }
+        else
+        {
+            str = con.readLine();
+        }
+        return str;
+    }
+    else
+    {
+        Scanner sc = new Scanner(System.in);
+        if (prompt.length != 0)
+        {
+            System.out.print(prompt[0]);
+        }
+        str = sc.nextLine();
+        return str; 
+    }
+}
+
+Usage:
+String name = gets("Your name please: ");
+String age = gets("How old are you, " + name + "? ");
+
+
+Homework assignment #2
+...due in 2 weeks!
+
+public static String[] loadFile(String filename, String ... range)
+{
+    
+}
+
+String[] s = loadFile("file1.txt");
+-or-
+s = loadFile("file1.txt", "1,5,7,12");              // specify lines to be loaded, no line 0
+s = loadFile("file1.txt", "7-310");                 // range specification
+s = loadFile("file1.txt", "7-310, 6, 120-180");     // range specification
+s = loadFile("file1.txt", "7-310, 6, 120-");        // dash is all the way to end
+s = loadFile("file1.txt", "7-310, 6, 6, 6, 6");     // load 6 multiple times
+s = loadFile("file1.txt", "1-");                    // entire file
+s = loadFile("file1.txt", "-38");                   // from beginning to line 38
+s = loadFile("file1.txt", "1-, 3, 7,7,3,100,6-12"); // totally OK 
+s = loadFile("file1.txt", "$, $, $")                // last line 3 times!
+s = loadFile("file1.txt", "1-$, 1-, 7-$, $")        // whole file 2x, 7- end, last line
+
+-Throw an error and display message for invalid range: 310-7
+-Create Driver and test this!  DemoLoadFile.java 
+-Use ArrayList to build up output, then convert to array[] with toArray() before returning
+
+reading: Scanner
+writing: PrintWriter
+
+Check for valid input file not a directory.  Problem: loadFile("/etc")
+Another call that should throw an error: loadFile("/dev/ls0") // system partition, not a file
+Use canRead(); method
+Use isFile(); method 
+Use isDirectory(); method 
+
+How do we deal with out of bounds ranges?
+-> return all possible things and print an error for the invalid ranges?
+
+Don't allow nulls or holes or empty spaces in the array
+
+In Unix when throwing an error: errnum throws negative number.
+If the user specifies the 0th line, that is OK, no need to throw an error, with
+the Unix philosophy of avoiding nagging errors in mind.
+
+Oracle style of programming involves giving a lot of errors and nitpicking.
+
+Example:
+if (errnum < 0)   // we have a problem if true
+Refer to description of error in errnum table based on value of errnum, ex -5, -6 etc
+We don't need to worry about this for HW, but it's nice to know about.
+
+Hints: use indexOf(), contains(), 
+and "from" "to" variables or an int[] range array with two values: from and to.
+
+Be able to handle this:
+loadFile("file.txt", "   0-\n  5\t     ");
+
+
+Topic: Multithreading
+
+What is the difference between a thread and a process?  We can have multiple threads in 
+a single process.  The old cool thing to talk about was processes, which are instances of
+a program in memory.  For example: 5 programs simultaneously, 5 processses.
+Processes are heavy entities, there are lots of restrictions against using too many processes.
+Maximum number of processes: 512 or 1024, for example.  There are kernel limitations.
+Threads are very light entities, no problem for system to handle.  For example,
+we can have millions of threads without much overhead.
+
+There is a program called processbomb which works by overloading a system with processes 
+causing shutdown.
+
+You can have as many threads as you want running inside a process.
+
+Java's Thread class
+We already learned about "Thread.sleep"
+We can do this:
+  extends Thread (subclass)
+         @Override run
+or this:
+  implements Runnable (interface)
+         implement run
+
+Which is better?  It depends on inheritance--runnable allows you to avoid the restriction of 
+one parent class; therefore, implementing Runnable is usually best.
+
+Signature of run:
+public void run();
+
+Run carries the responsibility of your thread.  For example: downloading a file for a 
+single run().  This thread should serve a single-purpose.
+
+Thread t = new Thread();
+t.start();
+
+Main thread is already/always running.
+
+Parent thread and children threads:
+If we make 4 threads in our main, they will be children of main.
+Rule: parents die last, make sure all children are dead before ending the parent thread.
+Rule: when any child thread is dying, the child must inform the parent that they are about 
+to die and that the job is done.  
+Should the parent save the child?  Most of the time, let the child die.
+
+This is the opposite in real life, where children usually die last.
+
+Here's an example of threading:
+
+public class Demo 
+{
+    public static void main(String[] args) 
+    {
+        // currentThread is a static method which returns the current thread object
+        Thread t = Tread.currentThread();  
+
+        println("current thread = " + t);  // current thread = Thread(main, 5, main)
+        t.setName("BlueFish");
+                                                                            //     \/ group
+        println("The new thread = " + t);  // The new thread = Thread(BlueFish, 5, main)
+                                                           //         ^name     ^priority
+        t.setPriority(7);  // change priority 1-10, 10 highest, 1 lowest
+        println("The new priority = " + t);  // The new priority = Thread(BlueFish, 7, main)
+
+        t.getId();  // get ID
+        println("The Id is = " + t.getId()); 
+
+        t.getName();  // get name
+        println("The name is = " + t.getName()); 
+    }
+}
+
+Priority is not guaranteed.
+For example: we have two threads, one to create file, and one to dump a file in an array
+--we can't run these simultaneously.
+A larger number is a higher priority.
+
+Each thread has a unique ID number.
+
+Threading example:
+
+class Demo implements Runnable 
+{
+    Thread t;
+    public Demo()
+    {
+        t = new Thread(this, "orange"); // creates new thread with this object with name orange
+        println("child thread created: " + t);
+        t.start();  // usually you want to start the thread in the constructor
+    }
+}
+
+@Override
+public void run()
+{
+    doit();
+}
+
+Driver program: this is easily corrupted, no priority offerd, and the parent 
+thread may finish before the child thread.  We'll find out more next week!
+public class DemoThread
+{
+    public static void main(String[] args)
+    {
+        new Demo();
+        do_what_ever
+    }
+}

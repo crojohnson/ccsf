@@ -1,0 +1,188 @@
+CS211s -- 9/1/16 
+
+This week's topics: Debugging, measuring effiency, serialization, Java 9
+
+
+Topic: Debugging
+
+A good debugger is jdb
+Type jdb -version to check to see if it's working.
+
+Debuggers check logic errors, not syntax errors.
+When compiling a program, create a debugging table,
+which contains information about debugging needed for the program:
+javac -g DoIt.java ,then after debugging omit the -g
+
+Type:
+jdb DoIt
+Type help in jdb
+
+Main commands in jdb:
+  run [prog name] [args]
+  set breakpoints: "stop in" + "stop at".  ex:
+  > stop at DoIt.main  //sets a breakpoint at main in the java file DoIt
+  > run                //program will stop when it encounters main
+  > step               //executes current line and steps to the next
+  > a = 5; b = 9;
+  > print a            //displays a variable's value
+  > dump obj           //displays the value of all of the static vars, instance vars, etc of the object.
+  > cont               //run to the end of the program
+  > next               //next skips a line
+  
+Try gdb as an alternative to jdb
+
+Assertions are used to check expected validity of values.  For example:
+  assert condition
+  assert condition:expr
+  assert n > 0;
+  assert t.equalsIgnoreCase("stop"): "too bad";
+
+Enable assertions with arg: java -ea DoIt
+Disable assertions with arg: java -da DoIt   // not really necessary because it's the default.
+Tool: "expect" https://en.wikipedia.org/wiki/Expect to automate jdb input and many other things.
+  
+
+Homework Assignment #1:
+
+Reminder: don't use syntax not yet covered, e.g. Collections or multithreading, lambda, etc.
+
+For this assignment, you can use array or ArrayList as a container.
+
+Class name for the assignment: IPAddress.java
+Purpose: Generate valid IP Addresses with digits in range 0-255 and 
+4 quadrants separated with periods.  Example: 12.92.7.230
+
+Make a class that has several methods:
+  String[] gen(int n)           // generates n v4 IP addresses... without Collections class but WITH Arrays class.  Implement compareTo or another comparator.
+  String[] uGen(int n)          // generates n unique v4 IP addresses... without Collections class
+  void head(String[] s, int n)  // displays the first n lines from an array.  Example: x, 32 displays the first 32 elements from x array
+  void tail(String[] s, int n)  // displays the last n lines from an array.  Exple: x, 32 displays the last 32 elements from x array
+  String[] sort(String[] s)     // sorts the array without Collections class
+
+Add constructor and  static methods.
+Test with: gen(25,000);
+
+Handling n out of range: print as many items as possible.
+
+Submit source code and test output via printed paper.
+
+Reminder: codestyle file exists in the instructor's pub/ directory--read it!
+  -no two or three line gaps, just one line gaps occasionally
+  -65 chars max per line
+  -no weird fonts
+  -use wrapper class
+  -camelCase
+  
+When displaying System.err.println: use proper language for the program's target audience.  
+Keep errors succinct as possible but not so brief that they omit information.
+
+
+Topic: Measuring efficieny
+
+There are professional programs to measure efficiency called "Profilers"
+Use the instructor's profiler:  Profiler.class and copy it to your home directory.
+
+Profiler.class usage:
+Profiler p = new Profiler();
+String x[] = ip.sort(y);
+println(p.usedTime());  // don't include other lines of code between object creation and method call
+
+Efficiency of code will not be a concern in this class.  CS111C handles efficiency.
+
+Aside: searching types are sequential(n), binary O(n log n), hash O(1)
+Hash works like this: computer memorizes locations of items in its memory with a hash formula and 
+can retrieve it in one try.
+
+
+Topic: Serialization
+
+Serialization is saving objects in long term memory.
+Deserialization is restoring objects from long term memory.
+Other names for this procedure: pickling, marshalling, and others.
+
+The class to be serialized must implement Serializable.
+Static fields will not be saved and transient fields will not be saved.
+Volatile, by the way, means accessible from multiple threads.
+
+class MyClass implements Serializable
+{
+    String s;
+    int i;
+    double d;
+    
+    public MyClass(String str, int i1, double d1)
+    {
+        s = str;
+        i = i1;
+        d = d1;
+    }
+    
+    public String toString()
+    {
+        return "s = " + s + "; i = " + i + "; d = " + d;
+    }
+}
+
+// tester:
+import java.io.*;
+public class DemoSerialization
+{
+    public static void main(String[] args)
+    {
+        // save the object mc
+        // try with resources which allows
+        // opening a file and automatically closes the file, 
+        // acceptable for classes that implements Closable
+        try(ObjectOutputStream oos = new ObjectOutputStream
+            ("serial"));   
+        {
+            
+            MyClass mc = new MyClass("hello", -7, 3.14);
+            println(mc);
+            oos.writeObject(mc);
+        } catch(IOExeption e) { }
+        
+        // restore our object
+        try(ObjectInputStream ois = new ObjectInputStream()
+            new FileInputStream("serial"))
+        {
+            MyClass mc2 = (MyClass) ois.readObject();
+            println(mc2);
+        } catch(Exception e) { }
+    }
+}
+
+
+Topic: Java 9
+
+Streaming data the old way:
+
+int i = 0;
+for (String name : names){
+    names[i++] = name.toUpperCase();
+}
+
+Ruby way:
+names.map(toupcase)
+
+new Java way:
+names.stream.map.String::toUpperCase();
+
+Java 9 will be adding jshell and improving some of the above issues.
+Learn jshell; Abbas loves it.  He wrote an program, ij, which is another 
+interactive shell.
+
+Reasons Java is popular, or features which make it superior to other languages:
+  -Java graphics are very good.  javafx is excellent.
+  -Networking.
+  -Database access with jdbc is great.
+  -Strong for web applications.
+  -Android programming.
+
+  
+Next week:
+1. inner classes: "what is the invisible object?" / "what is the invisible class?"
+2. anonymous classes
+3. threading
+
+Note: check syllabus for potential reading.

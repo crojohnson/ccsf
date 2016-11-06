@@ -1,0 +1,175 @@
+CS211s -- 8/25/16 
+
+This week's topics: Basic method wrappers, code style, etc
+
+
+//---------------------------------
+
+// Non-unique random number generator
+public static int rand(int a, int b) {
+    return (int) ((b - a + 1) * Math.random() + a);
+}
+// test the random number generator
+for (int i = 0; i < 10; i++) {
+    println("" + rand(1, 000));
+}
+
+//---------------------------------
+
+Always compile optimized:
+javac -O3 DoIt.java
+
+//---------------------------------
+
+// Static factory methods: create an object of a specific class.
+// Example:
+
+Properties p = new Properties();       // constructor, not method
+Properties p = System.getProperties(); // factory method
+
+// Calendar class has no constructor, we have to use a static method.  
+// Example:
+Calendar c = Calendar.getInstance();
+
+// To disallow constructors, make a class private, make the default 
+// constructor private and add a factory method.
+// Example:
+class DoIt {
+    private DoIt() { }
+    // ......
+}
+
+// An advantage of a static factory method: you can call it whatever you like, 
+// instead of the name of the class.  There is no convention for naming a factory method.
+
+//---------------------------------
+
+// **** Last year's exam question: ****
+// Write a method called showProperties() that will show all properties in your system.
+// Use key-value pairs to show all of these properties.
+
+import java.util.Properties;
+
+public static void showProperties() {
+    Properties p = System.getProperties();
+    p.list(System.out);    // or:  println(p);  since toString() is overridden from Object
+}
+
+// equals() method overrides Object equals, which compares memory addresses of objects.
+// == always compares memory addresses for objects.
+// Always override equals() and toString()
+// cars c1 = new Cars();
+// cars c2 = new Cars();
+// if (c1.equals(c2)) ...
+
+//---------------------------------
+
+// Avoid this ugly syntax:
+int c = Math.sqrt(Math.pow(a, 2), Math.pow(b, 2));
+
+// But do:
+import static java.lang.Math.*;
+int c = sqrt(pow(a, 2), pow(b, 2));
+
+// Example:
+import static java.lang.System.*;
+exit();
+
+//---------------------------------
+
+// Debugging method continuation:
+// Adding debugging:
+
+java -DDEBUG DoIt  // <--this adds a key to properties, no value or junk value.  
+                   // non-junk value: java -DDEBUG="OK" DoIt
+
+debug("x = " + x);
+debug("now I am in the fact method");
+debug("now I am in the fact method", true);  // dumps to NameOfProgram.dbg
+
+public static void debug(Object o, boolean ... b)  // boolean for toggling logging
+{
+    if (System.getProperty("DEBUG") != null)  // check for existence of property
+    {
+        if (b.length == 0)
+        {
+            System.out.println("" + o); // don't debug to .err.println!
+        }
+        else
+        {
+            if (b[0]) 
+            {
+                String fname = System.getProperty("sun.java.command").split(" ")[0] + ".dbg";
+                
+                java.io.File f = new java.io.File(fname);
+                
+                try 
+                {
+                    java.io.PrintWriter pw = new java.io.PrintWriter(
+                    new java.io.FileOutputStream(f, true));   
+                    // the above boolean argument true is necessary for appending to a file!
+                    
+                    pw.println("" + o);
+                    pw.flush();   // flush the buffer, meaning wait a certain 
+                                  // amount of time to clear the memory.
+                    pw.close();
+                } catch (java.io.FileNotFoundException e) {
+                    System.err.println(e);
+                }
+            }
+        }
+    }
+}
+
+// Always use printWriter();
+// Reading file: Scanner();
+
+// Anonther way to get your program name:
+public static String progName() 
+{
+    return Thread.currentThread().getStackTrace()[1].getClassName();
+}
+
+//---------------------------------
+
+Properties p = new Properties();
+p.out("Height", "200");  // make sure K,V are both String
+p.out("Scannable", "true");
+
+//---------------------------------
+
+There is a sun property (key): sun.boot.class.path <--contains path to all jar files on system
+.tar = tape archive
+.jar = java archive
+run a jar:
+java --jar NameOfJar
+
+public static void showJars() 
+{    
+    String str = System.getProperty("sun.boot.class.path");
+    //String str = System.getProperty("sun.boot.class.path", "my.jar");   // not static factory method!!  first arg: all jars if exists, second arg: default
+    
+    String[] jars = str.split(File.pathSeparator());     
+    //String[] jars = str.split(":"); // only works on unix, linux, mac!!    
+    
+    for (String jar : jars) 
+    {
+        System.out.println(jar);
+    }
+}
+
+ls -l $(java DemoJars)
+
+// Java has more than 50,000 classes!
+
+//---------------------------------
+
+Homework rules:
+If homework doesn't comply with instructor's rules, a lot of points will be lost.
+File in pub dir: code_style ..read it!
+
+mkjava HW1.java
+or mkjava -g GUIProgram.java
+or mkjava -e Pico or Nano or VI HW1.java
+
+Use vi or emacs.

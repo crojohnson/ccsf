@@ -1,0 +1,301 @@
+CS211s -- 9/20/16 
+
+This week's topics: Multithreading, JARs and Reflection
+
+It's acceptable to create an anonymous inner class to handle threads..
+But there is a better approach.
+
+
+// don't do this
+new Thread()
+{
+    public void run()
+    {
+        // code here
+    }
+}.start();
+
+
+// do this
+new Thread(new Runnable()
+{
+    @Override
+    public void run()
+    {
+        // code here
+    }
+}).start();
+
+
+Last week, another approach was discussed, involving creation of a variable:
+Thread t = new Thread(); ... etc
+
+We can also use a lambda expression to create a thread (Java 8 or higher):
+
+http://www.codejava.net/java-core/the-java-language/java-8-lambda-runnable-example
+
+Runnable t = () -> { /*...code here...*/; };
+new Thread(t).start();
+
+Here's a class definition for a new thread:
+
+class NewThread implements Runnable
+{
+    String name;
+    Thread t;
+    NewThread(String tname)
+    {
+        name = tname;
+        t = new Thread(this, name);
+        t.start();
+        
+        public void run()
+        {
+            System.out.println("do stuff");
+        }
+    }
+}
+
+class DemoMultiThread
+{
+    public static void main(String[] args) 
+    {
+        NewThread nt1 = new NewThread("gold");
+        NewThread nt2 = new NewThread("silver");
+        NewThread nt3 = new NewThread("copper");
+        println("gold is alive: " + nt1.t.isAlive());
+        println("silver is alive: " + nt2.t.isAlive());
+        println("copper is alive: " + nt3.t.isAlive());
+        
+        try
+        {
+            nt1.t.join();
+            nt2.t.join();
+            nt3.t.join();
+        } catch (InterruptedException ie) { }
+    }
+}
+
+
+When writing programs in multiple threads, be careful of corruption,
+i.e. two methods writing to the same file.  This is called "thread unsafe."
+To solve this problem, declare methods using the synchronized keyword:
+
+public static synchronized void DoStuff()
+{
+    // code here
+}
+
+..useful in databases!
+Old approach: semaphore
+
+
+Topic: JAR files
+
+You can archive anything.. sounds like tar (tape archive), the old tool from unix.
+
+options:
+c = create variable
+v = verbose
+f = filename is the next item
+x = extract without deleting from jar
+t = list contents of jar
+
+Full option explanations on the Oracle docs:
+https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jar.html
+
+jar cvf loveLetters.jar love1 love2 love3
+
+jar tvf loveLetters.jar
+
+The fourth file is called the manifest file or .mf
+
+jar xvf loveLetters.jar love2
+jar xvf loveLetters.jar   // no specific file args, extracts everything
+
+Example of using JAR to handle your wrappers:
+
+package MyPack;
+
+public class Calc
+{
+    public static int add(int a, int b)
+    {
+        return a+b;
+    }
+    public static int div(int a, int b)
+    {
+        return a/b;
+    }
+}
+
+javac -O -d . Calc.java    
+-O compiles optimized, -d creates a folder with the same name as package and
+puts the class in it.
+Example: MyPack/Calc.class
+
+Compile the JAR:
+
+jar cvf my.jar MyPack
+rm -rf MyPack
+
+import static MyPack.Calc.*;
+class DemoCalc
+{
+    public static void main(String[] args)
+    {
+        int x = add(5, 9);
+        int y = div(18, 3);
+        System.out.println("x = " + x + "y = " + y);
+    }
+}
+
+javac -cp my.jar . DemoCalc.java
+cp stands for classpath.
+. means search for methods and JAR inside current directory.
+
+java -cp my.jar . DemoCalc
+
+Or if typing the above often gets annoying:
+export CLASSPATH=my.jar:.:$CLASSPATH
+
+Consider putting the above in a shell script.
+
+Running a JAR:
+java -jar TicTacToe.jar
+
+Making an executable jar:
+Create a manifest file, name it anything... say, hw3.man
+Inside this file, type:
+Class-Main: MyMainClassName
+
+Add any number of lines for explanation, but make sure last line is blank!
+
+jar cvmf hw3.man hw3.jar SortLarge.class // etc; list class names here.
+
+Omit Java source files unless intended to be in the JAR.
+
+
+Topic: Command line arguments in Java
+
+jar -cvf abc.jar a b k m u language/java-8-lambda-runnable-example
+   -c -v -f
+   command_name  option(s) filename
+
+java DoIt -k -n Nancy -s 39.75 -p 392-7388 file1 file2 file3
+
+C++ has a program called getopt to parse command line args.
+
+Use GetOpt.class to parse java command line args, based on its C++/C counterpart.
+
+Here's how to use GetOpt.class:
+In the main method:  GetOpts go = new GetOpts(args, "kn:s:p:");
+The second parameter in this constructor call is the list of the options.  
+Use a colon after the option to require a data string in addition to the option name.
+
+int c;
+String name, salary, phone;
+
+g.opterr(false);  // disables error messages
+while ((c = g.getOpt()) != -1)
+{
+    switch (c)
+    {
+        case 'k':
+            //do stuff    
+            break;
+        case 'n':
+            name = g.getvalue(c);
+            break;
+        case 's':
+            salary = g.getvalue(c);
+            break;
+        case 'p':
+            phone = g.getvalue(c);
+            break;
+        case '?':  // "?" means none of the above or unspecified arg/error 
+            println("Error: no such option: " + c.optopt());
+            break;
+    }
+}
+
+To handle file names, i.e. file1, file2, file3 in the above example:
+String filenames[] = g.getarg();    // contents: file1, file2, file3
+
+Check DemoGetOp or TestGetOp in instructor's pub/ directory on hills
+for another concrete example of how to use this arg parser program.
+
+
+Topic: Reflection
+
+In Java, every class is an object, and every object has a class.
+In java, there is a class called Class.  The magic of reflection comes from this class.
+This class has tons of methods that allow us to probe any object in Java.
+Any time you want to work in reflection, first step is to create an object of upper-c Class.
+There are many different approaches to getting the object of upper-c Class.  We need to
+learn all of them.  The built-in constructor is totally useless.  We'll use factory methods
+to get an object of the upper-c Class.
+
+Class c = anyobject.getClass();  // call getClass() on any object.
+getClass() is an instance method in the Object class which cannot be overriden.
+
+Class c = System.console().getClass();
+System.console() creates an object of the console.
+
+enum E { A, B };
+Class c = A.getClass();
+All elements of enumeration inherit this method!
+
+byte[] b = new byte[1024];
+Class c = b.getClass();
+
+Class c = boolean.class;
+By adding .class to any primitive data type, one is able to create an object of upper-c Class.
+Note: This approach will be used heavily in Android programming.
+
+Class c1 = int[][].class;
+
+To summarize so far: two ways to get Class: 
+1) use getClass() on any object, or 2) append .class to any primitive.
+
+Class c = Class.forName("com.duke.MyServer");
+forName() is a static factory method of Class which takes a String with the 
+fully-qualified name of your class as an argument.
+
+Class has type descriptors: 
+Any boolean is represented as Z inside java.
+Example: boolean[] is represented as [Z  (the bracket indicates an array Object)
+
+boolean[] m = new boolean[10];
+println(m); // displays: [Z@xxxx or the representation inside java
+
+byte datatype:    B
+char datatype:    C
+short datatype:   S
+int datatype:     I
+long datatype:    J
+float datatype:   F
+double datatype:  D
+boolean datatype: Z
+
+String[] is represented as [Ljava.lang.String  // this is a type descriptor
+
+More ways to obtain a Class instance:
+Class c = "abcd".getClass();
+Class c = new Button().getClass();
+Class c2 = java.awt.Button.class;
+Class c3 = int[].class;
+Class c4 = Class.forNmae("java.lang.String");
+Class c5 = Class.forName("[Ljava.awt.Button");  // type descriptor as argument
+Class c6 = Class.forName("[[[I");  // what is this?  a 3d int array.
+
+**** These may be questions on the final! ****
+As mentioned, getClass() is final.  
+More info: http://www.javamakeuse.com/2014/10/why-getclass-method-in-java.html
+
+Class c = Boolean.TYPE;  // here we are using the wrapper classes for the primitives
+Class c = Integer.TYPE;
+
+Reflection is metaprogramming!
+
+Next week: homework on reflection will be assigned.
