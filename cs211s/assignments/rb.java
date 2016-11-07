@@ -39,7 +39,7 @@ public class rb
             {
                 case '?':
                     die("Usage: java srm [-d] [-s] " +
-                        "[-r] filenames to restore");
+                        "[-r] [filenames to restore]");
                 case 'd': case 's': case 'r':
                     choices.add((char)c);
             }
