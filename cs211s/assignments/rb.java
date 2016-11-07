@@ -2,7 +2,7 @@
  * Author : Greg Gorlen
  * Date :   11/4/16
  * Homework assignment : 4
- * Objective : This program performs a safe removal of files
+ * Objective : Utility to manage a recycle bin made by srm
  *
  * Valid arg options:
  * -d : empty recycle bin
@@ -17,6 +17,8 @@ import java.io.*;
 
 public class rb 
 {
+    private static final String RB_PATH = "$HOME/.RecycleBin.jar";
+    
     public static void main(String[] args) 
     {
         mkWrapper();
@@ -33,60 +35,81 @@ public class rb
         {
             switch(c)
             {
-                case 'd': case 's': case 'r': 
-                    choices.add((char)c); break;
                 case '?': 
                     die("Usage: java srm [-d] [-s] " + 
                         "[-r] filenames to restore");
+                case 'd': case 's': case 'r': 
+                    choices.add((char)c);
             }
         }
+        
+        // Get working directory
+        String dir = system("pwd")[0] + "/";
         
         // Perform requested actions
         if (choices.contains('s')) // Show files in recycle bin
         {
-            displayArray(system("jar tf .RecycleBin.jar"));
+            displayArray(system("jar tf " + RB_PATH));
         }
         
         if (choices.contains('r')) // Restore files from recycle bin
         {
-            // Get filename(s) from args and convert them to string
-            String[] restoreFiles = g.getarg();
-            StringBuilder sb = new StringBuilder(restoreFiles.length);
-            for (String r : restoreFiles) sb.append(" " + r);
-
-            // Extract files from recycle bin
-            displayArray(system("jar xf .RecycleBin.jar" + sb.toString()));
-            
-            // Remove restored files from bin
-            displayArray(system("7z d -tzip .RecycleBin.jar"));
+            restoreFiles(dir);
         }
         
         if (choices.contains('d')) // Delete recycle bin
         {
-            displayArray(system("jar -0c .RecycleBin.jar"));
+            newBin();
         }
     }
-}
-
-
-//
-
-
-/*
-
-String x[] = system("jar f RecycleBin");
-
-for (String str : x) /
-{
-    for (String k : args) {
-        if (k.equals(args[0]);
+    
+    private static void restoreFiles(dir) 
+    {
+        // Get filename(s) from args and convert them to string
+        String[] restoreFiles = g.getarg();
+        StringBuilder sb = new StringBuilder(restoreFiles.length);
+        for (String r : restoreFiles) sb.append(" " + dir + r);
+        String filesToRestore = sb.toString();
+        
+        // Extract files from recycle bin
+        displayArray(system("jar xf " + RB_PATH + filesToRestore));
+        
+        // Remove restored files from bin
+        if (system("which zip").length > 0) 
+        {
+            displayArray(system("zip -d " + RB_PATH + filesToRestore));
+        }
+        else 
+        {
+            // Find files to keep and make a new JAR of them
+            StringBuilder newJarContents = new StringBuilder();
+            for (String r : system("jar tf " + RB_PATH)) 
+            {
+                if (!filesToRestore.contains(r)) 
+                {
+                    newJarContents.append(" " + r);
+                }
+            }
+            String contents = newJarContents.toString();
+            
+            if (contents.length > 0) 
+            {
+                displayArray(system("jar xf " + RB_PATH + contents));
+                displayArray(system("jar cMf " + RB_PATH + contents));
+                displayArray(system("rm -r " + contents));
+            }
+            else
+            {
+                newBin();
+            }
+        }
+    }
+    
+    private static void newBin() 
+    {
+        system("mkdir META-INF");
+        system("jar cMf " + RB_PATH + " META-INF");
+        system("zip -d " + RB_PATH + " META-INF");
+        system("rm META-INF");
     }
 }
-
-srm abcd xyz mlu
-
-File f = new File(args[0]);
-
-if (f.exists()) ...
-
-*/

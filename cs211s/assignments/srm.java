@@ -12,33 +12,40 @@ import java.io.*;
 
 public class srm 
 {
+    private static final String RB_PATH = "$HOME/.RecycleBin.jar";
+    
     public static void main(String[] args) 
     {
         mkWrapper();
 
         if (args.length == 0) // No filenames provided
         {
-            die("Usage: java srm filenames(s), " 
-                + "directory or directories to recycle"
+            die("Usage: java srm filenames(s), "
+                + "directory or directories to recycle\n"
                 + "Warning: this program will overwrite "
-                + "files already in the bin.");
+                + "files already in the bin sharing the "
+                + "same name and directory.");
         }
+
+        // Get working directory
+        String dir = system("pwd")[0] + "/";
         
         StringBuilder sb = new StringBuilder(args.length);
-        String action = "c"; // Adjusts jar parameter for updating
-       
+        String action = "c"; /* Adjusts jar parameter for updating,
+                                default is create jar */
+
         // Handle command line parameters for files to recycle
-        for (String a : args) sb.append(" " + a);
-        
-        /* Check to see if recycle bin exists and 
+        for (String a : args) sb.append(" " + dir + a);
+
+        /* Check to see if recycle bin exists and
            update it with new files if so */
-        File f = new File(".RecycleBin.jar");
+        File f = new File(RB_PATH);
         if(f.exists()) action = "u";
 
         // Execute shell command to copy files to the recycle bin jar
-        displayArray(system("jar -0" + action + 
-            "f .RecycleBin.jar" + sb.toString()));
-        
+        displayArray(system("jar " + action
+              + "Mf " + RB_PATH + sb.toString()));
+
         // Remove the original files
         displayArray(system("rm" + sb.toString()));
     }
