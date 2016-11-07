@@ -53,10 +53,32 @@ Next part: restoring files from the recycle bin, program title is "rb".
 java rb -d                 "empty recycle bin"
         -s                 "show contents of recycle bin"
         -r good bad nice   "restore files from recycle bin"
+        
+        //
+
+A little help from the whiteboard:
+/*
+
+String x[] = system("jar f RecycleBin");
+
+for (String str : x) /
+{
+    for (String k : args) {
+        if (k.equals(args[0]);
+    }
+}
+
+srm abcd xyz mlu
+
+File f = new File(args[0]);
+
+if (f.exists()) ...
+
+*/
 
 Set it up so you don't have to type java ... using mkwrapper.
 JAR file doesn't need an MF file--suppress the creation of this MF with -0 when creating JAR:
-jar -0cf etc   // 0 means no manifest file
+jar -0cf etc   // 0 means no manifest file (actually it's capital M, -0 means don't compress -GG)
 
 File in pub directory: DemoSystem.java to see how to communicate with the system.
 
