@@ -4,17 +4,17 @@
  * Homework assignment : 4
  * Objective : This program performs a safe removal of files
  */
- 
+
 import static cs211s.Wrappers.*;
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public class srm 
+public class srm
 {
     private static final String RB_PATH = "$HOME/.RecycleBin.jar";
-    
-    public static void main(String[] args) 
+
+    public static void main(String[] args)
     {
         mkWrapper();
 
@@ -29,7 +29,7 @@ public class srm
 
         // Get working directory
         String dir = system("pwd")[0] + "/";
-        
+
         StringBuilder sb = new StringBuilder(args.length);
         String action = "c"; /* Adjusts jar parameter for updating,
                                 default is create jar */
