@@ -18,13 +18,14 @@ import java.io.*;
 public class rb
 {
     private static final String RB_PATH = "$HOME/.RecycleBin.jar";
+    private static final String ARG_OPTS = "dsr";
     private static GetOpt g;
 
+    /*******************************main()***************************/
     public static void main(String[] args)
     {
         mkWrapper();
 
-        final String ARG_OPTS = "dsr";
         int c, i = 0;
         ArrayList<Character> choices = new ArrayList<>();
         g = new GetOpt(args, ARG_OPTS);
@@ -64,33 +65,38 @@ public class rb
         }
     }
 
+    /*******************************restoreFiles()******************/
     private static void restoreFiles(String dir)
     {
         // Get filename(s) from args and convert them to string
         String[] restoreFiles = g.getarg();
         StringBuilder sb = new StringBuilder(restoreFiles.length);
 
-        if (!(restoreFiles[0].length() < 1)) // Filenames were provided
-        {
+        if (!(restoreFiles[0].length() < 1)) 
+        {   // Filenames were provided
             for (String r : restoreFiles) sb.append(" " + dir + r);
             String filesToRestore = sb.toString();
             println("jar xvf " + RB_PATH + filesToRestore);
 
             // Extract files from recycle bin
-            displayArray(system("jar xvf " + RB_PATH + filesToRestore));
+            displayArray(system("jar xvf " + RB_PATH
+                                    + filesToRestore));
 
-            // Move files to current directory from their extraction location
+            // Move files to current directory 
+            // from their extraction location
             displayArray(system("mv " + filesToRestore + " ."));
 
             // Delete temporary restore directory
-            displayArray(system("rm -r " + filesToRestore.split("/")[0]));
+            displayArray(system("rm -r " 
+                       + filesToRestore.split("/")[0]));
 
             // Remove restored files from bin
             if (system("which zip").length > 0)
             {
-                displayArray(system("zip -d " + RB_PATH + filesToRestore));
+                displayArray(system("zip -d " + RB_PATH
+                                       + filesToRestore));
             }
-            else
+            else // No zip utility--do it the hard way
             {
                 // Find files to keep and make a new JAR of them
                 StringBuilder newJarContents = new StringBuilder();
@@ -98,22 +104,24 @@ public class rb
                 {
                     if (!filesToRestore.contains(r))
                     {
-                    newJarContents.append(" " + r);
+                        newJarContents.append(" " + r);
                     }
                 }
                 String contents = newJarContents.toString();
 
                 if (contents.length() > 0)
                 {
-                    displayArray(system("jar xf " + RB_PATH + contents));
-                    displayArray(system("jar cMf " + RB_PATH + contents));
+                    displayArray(system("jar xf " 
+                               + RB_PATH + contents));
+                    displayArray(system("jar cMf " 
+                               + RB_PATH + contents));
                     displayArray(system("rm -r " + contents));
                 }
                 else
                 {
                     newBin();
                 }
-            }
+            } // end Remove restored files from bin
         }
         else // filenames were not provided
         {
@@ -121,8 +129,8 @@ public class rb
             for (String r : files) sb.append(" " + dir + r);
             String filesToRestore = sb.toString();
 
-            println("mv " + filesToRestore + " .");
-            // Move files to current directory from their extraction location
+            // Move files to current directory 
+            // from their extraction location
             system("mv " + filesToRestore + " .");
 
             // Delete temporary restore directory
@@ -130,12 +138,13 @@ public class rb
             newBin();
         }
     }
-
+    
+    /*******************************newBin()************************/
     private static void newBin()
     {
-        system("mkdir META-INF");
-        system("jar cMf " + RB_PATH + " META-INF");
-        system("zip -d " + RB_PATH + " META-INF");
-        system("rm -r META-INF");
+        system("mkdir zMETA-INF");
+        system("jar cMf " + RB_PATH + " zMETA-INF");
+        system("zip -d " + RB_PATH + " zMETA-INF");
+        system("rm -r zMETA-INF");
     }
 }

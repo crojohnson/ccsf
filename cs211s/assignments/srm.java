@@ -13,7 +13,8 @@ import java.io.*;
 public class srm
 {
     private static final String RB_PATH = "$HOME/.RecycleBin.jar";
-
+    
+    /*******************************main()**************************/
     public static void main(String[] args)
     {
         mkWrapper();
